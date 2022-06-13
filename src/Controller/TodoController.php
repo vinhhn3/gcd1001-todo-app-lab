@@ -12,14 +12,36 @@ use Symfony\Component\Routing\Annotation\Route;
 class TodoController extends AbstractController
 {
     /**
+     * @Route("/todo/search", name="search_todo",methods={"GET"})
+     */
+    public function searchTodo(Request $request) : Response{
+        $searchText = $request->query->get('searchText');
+        
+        // Search all todos by TodoName or categoryName
+        // Call Doctrine
+        $doctrine = $this->getDoctrine();
+        $todoRepos = $doctrine->getRepository(Todo::class);
+        
+        $todos = $todoRepos->searchByTodoNameOrCategoryName($searchText);
+        
+        return $this->render("todo/search.html.twig",[
+            'todos' => $todos
+        ]);
+    }
+    
+    /**
      * @Route("/todo",name="todo_list")
      */
     public function listAction() {
-        $todos = $this->getDoctrine()
-            ->getRepository(Todo::class)
-            ->findAll();
+        // Call Doctrine
+        $doctrine = $this->getDoctrine();
+        $todoRepos = $doctrine->getRepository(Todo::class);
+        
+        $todos = $todoRepos->findAll();
         return $this->render('todo/index.html.twig',['todos'=>$todos]);
     }
+    
+
 
     /**
      * @Route("/todo/details/{id}",name="todo_details")

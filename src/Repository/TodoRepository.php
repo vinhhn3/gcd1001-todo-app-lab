@@ -38,6 +38,18 @@ class TodoRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    
+    public function searchByTodoNameOrCategoryName(string $searchtext){
+        //
+        return $this->createQueryBuilder('t')
+            ->where('t.name like :searchText')
+            ->orWhere('t.description like :searchText')
+            ->setParameter("searchText", '%'.$searchtext.'%')
+            ->getQuery()
+            ->getArrayResult();
+    }
+    
+    
 
 //    /**
 //     * @return Todo[] Returns an array of Todo objects
